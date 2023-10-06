@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+_add_wants() {
+    add_symlink "/usr/lib/systemd/system/emergency.target.wants/$1" "/usr/lib/systemd/system/$1"
+}
+
+build() {
+    add_binary busybox
+    for exe in $(busybox --list); do
+        if [[ "$exe" == "busybox" ]]; then continue; fi
+        add_symlink "/bin/${exe}" /bin/busybox
+    done
+    
+    if ! grep -q "^root:" "$BUILDROOT/etc/passwd"; then
+        echo "root:x:0:0::/root:/bin/sh" >> "$BUILDROOT/etc/passwd"
+    fi
+
+    if grep -q "^root:" "$BUILDROOT/etc/shadow"; then
+        sed -i -e "s/^root:.*/$(grep '^root' /etc/shadow)/" "$BUILDROOT/etc/shadow"
+    else
+        grep "^root:" /etc/shadow >> "$BUILDROOT/etc/shadow"
+    fi
+
+    ec=$(mktemp)
+    echo "[Unit]" >> "$ec"
+    echo "DefaultDependencies=no" >> "$ec"
+    echo "[Service]" >> "$ec"
+    echo "Type=oneshot" >> "$ec"
+    echo "ExecStartPre=/usr/bin/sleep 5" >> "$ec"
+    echo "ExecStart=/usr/bin/systemctl list-units" >> "$ec"
+    echo "StandardOutput=journal+console" >> "$ec"
+    add_file "$ec" /usr/lib/systemd/system/echo-units.service 0644
+
+    add_dir /usr/lib/systemd/systemd/emergency.target.wants
+   _add_wants kmod-static-nodes.service
+   _add_wants systemd-modules-load.service
+   _add_wants systemd-udev-trigger.service
+   _add_wants systemd-udevd.service
+   _add_wants systemd-journald.service
+   _add_wants systemd-tmpfiles-setup-dev.service
+   _add_wants echo-units.service
+}
+
+help() {
+    cat <<HELPEOF
+This hook adds files to make a shell available in the initrd. It's only 
+needed with systemd-based inits. Requires busybox to be installed.
+HELPEOF
+}

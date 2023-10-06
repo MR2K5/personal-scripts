@@ -1,0 +1,10 @@
+[Trigger]
+Operation=Install
+Operation=Upgrade
+Type=Path
+Target=usr/lib/systemd/boot/efi/systemd-bootx64.efi
+
+[Action]
+Description=Signing systemd-boot
+When=PostTransaction
+Exec=/usr/bin/sbsign --key /etc/secureboot/db.key --cert /etc/secureboot/db.crt /usr/lib/systemd/boot/efi/systemd-bootx64.efi

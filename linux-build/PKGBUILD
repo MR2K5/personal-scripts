@@ -1,0 +1,91 @@
+#!/hint/bash
+
+
+# Maintainer: Massimo Ruohonen <massimo.ruohonen@gmail.com>
+pkgname=linux-chaotic
+pkgver=6.5.2
+pkgrel=1
+epoch=
+pkgdesc="Linux kernel configured for chaotic"
+arch=(x86_64)
+url="https://kernel.org/"
+license=('GPL2')
+groups=()
+depends=("coreutils" "initramfs" "kmod")
+makedepends=(
+  "clang"
+  "lld"
+  llvm
+  bc
+  cpio
+  gettext
+  git
+  libelf
+  pahole
+  perl
+  python
+  tar
+  xz)
+checkdepends=()
+optdepends=(
+    "wireless-regdb: to set the correct wireless channels of your country" 
+    "linux-firmware: firmware images needed for some devices")
+provides=(VIRTUALBOX_GUEST_MODULES)
+conflicts=()
+replaces=()
+backup=()
+options=(!ccache !buildflags)
+install=
+changelog=
+source=(
+    "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-$pkgver.tar.xz"
+    "linux-chaotic.patch"
+    "config")
+noextract=()
+md5sums=('b27f15af00742f2c49a5247b73247d3b'
+         '3e6aacd9e37df62bd28244f8b8d0f044'
+         '896575df533c85c92d35119d71cdebf4')
+validpgpkeys=()
+
+_decl_vars() {
+    _extraver="-chaotic"
+    _ksrc="${srcdir}/linux-${pkgver}"
+    _localver=-"${pkgrel}"
+    _moduledir="${pkgdir}/usr/lib/modules/${pkgver}${_extraver}${_localver}"
+}
+
+prepare() {
+    _decl_vars
+    echo "$_extraver"
+    echo "$_ksrc"
+    echo "$_localver"
+    echo "$_moduledir"
+
+    cd "${_ksrc}"
+    patch --forward --strip=1 --input="${srcdir}/linux-chaotic.patch"
+}
+
+build() {
+    _decl_vars
+	cd "${_ksrc}"
+	cp "${srcdir}/config" .config
+	make LLVM=1 scripts
+    ./scripts/config --set-str CONFIG_LOCALVERSION "${_localver}"
+	
+	make LLVM=1 oldconfig
+	make LLVM=1 prepare
+	make LLVM=1 bzImage
+	make LLVM=1 modules_install
+}
+
+package() {
+    _decl_vars
+	cd "${_ksrc}"
+    make LLVM=1 DESTDIR="$pkgdir" modules_install
+    cd "${_moduledir}"
+    rm build source
+    cp "${_ksrc}/arch/x86/boot/bzImage" vmlinuz
+    cp "${_ksrc}/System.map" .
+    cp "${_ksrc}/Module.symvers" .
+    cp "${_ksrc}/vmlinux.symvers" .
+}
