@@ -129,6 +129,12 @@ shopt -s expand_aliases
 # Enable history appending instead of overwriting.  #139609
 shopt -s histappend
 
+shopt -s checkjobs
+shopt -s cmdhist
+shopt -s dirspell
+shopt -s lithist
+
+
 # Github bash completion file
 if [ -f .bash_github_completion ]
 then
@@ -136,9 +142,13 @@ then
 fi
 
 # Has .local/ tree to path
-PATH="$HOME/.local/bin:$PATH"
-LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
-PYTHONPATH="$HOME/.local/lib/python3.9/site-packages:$PYTHONPATH"
+export PATH="$HOME/.local/bin:$PATH"
+export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
+export PYTHONPATH="$HOME/.local/lib/python3.9/site-packages:$PYTHONPATH"
+
+export HISTCONTROL=ignoreboth
+export HISTFILESIZE=10000
+export HISTSIZE=10000
 
 #
 # # ex - archive extractor
@@ -165,3 +175,4 @@ ex ()
     echo "'$1' is not a valid file"
   fi
 }
+
