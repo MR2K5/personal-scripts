@@ -176,3 +176,12 @@ ex ()
   fi
 }
 
+
+function disassemble () {
+    if [ -f ] ; then
+        objdump --disassemble --disassembler-color=extended -M att --visualize-jumps=extended-color --demangle "$1" $@ | less -x 1
+    else
+        echo "'$1' is not a valid file"
+     fi
+}
+
