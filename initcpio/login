@@ -1,0 +1,25 @@
+
+build() {
+    # Symlinks
+    for file in $(busybox --list)
+    do
+        add_symlink /bin/${file} busybox
+    done
+
+    # Add busybox for an interactive shell
+    add_binary busybox
+
+    MASK=$(umask)
+    umask 077
+    
+    SHADOW=$(mktemp)
+    grep "^root" /etc/shadow > ${SHADOW}
+
+    add_file ${SHADOW} /etc/shadow 0600
+    echo "root:x:0:0:::/bin/sh" > ${SHADOW}
+    add_file ${SHADOW} /etc/passwd 0644
+
+    # Cleanup
+    rm ${SHADOW}
+    umask ${MASK}
+}

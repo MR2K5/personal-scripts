@@ -2,6 +2,7 @@
 alias ls="ls --color=auto"
 alias la="ls -A"
 alias ll="ls -lahF"
+alias cdp="cd -P"
 
 alias diff="diff --color=auto"
 alias grep="grep --color=auto"
