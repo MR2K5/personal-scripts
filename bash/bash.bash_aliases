@@ -19,6 +19,7 @@ alias more="less"
 alias py="python3"
 
 alias prism="/opt/prism/bin/prismlauncher"
+alias gputop="intel_gpu_top"
 
 function human_readable() {
     numfmt --to=iec-i --suffix B --format="%9.2f" "$@"

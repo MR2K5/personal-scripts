@@ -19,6 +19,21 @@ build() {
     echo "root:x:0:0:::/bin/sh" > ${SHADOW}
     add_file ${SHADOW} /etc/passwd 0644
 
+    # Symlink ctrl-alt-del.target to rescue.target
+    add_symlink /usr/lib/systemd/system/ctrl-alt-del.target rescue.target
+
+    cat > ${SHADOW} << EOF
+[Unit]
+DefaultDependencies=false
+
+[Service]
+Type=oneshot
+ExecStart="/usr/bin/ln -sf reboot.target /usr/lib/systemd/system/ctrl-alt-del.target"
+
+EOF
+    add_file ${SHADOW} /usr/lib/systemd/system/allow-reboot.service 644
+    #add_symlink /usr/lib/systemd/system/rescue.target.wants/allow-reboot.service ../allow-reboot.service
+
     # Cleanup
     rm ${SHADOW}
     umask ${MASK}
