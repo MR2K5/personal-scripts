@@ -185,3 +185,6 @@ function disassemble () {
      fi
 }
 
+# Extra completions
+if [[ -f /etc/bash.bash_completions ]]; then . /etc/bash.bash_completions; fi
+if [[ -f ~/.bash_completions ]]; then . ~/.bash_completions; fi
