@@ -1,5 +1,8 @@
 #
-# ~/.bash_profile
+# /etc/profile
 #
 
-[[ -f ~/.bashrc ]] && . ~/.bashrc
+shopt -s shift_verbose
+
+# Read bashrc if we are interactive
+[[ -f /etc/bash.bashrc && $- == *i* ]] && . /etc/bash.bashrc

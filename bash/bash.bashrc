@@ -1,9 +1,6 @@
 #
-# ~/.bashrc
+# /etc/bash.bashrc
 #
-
-#export LD_PRELOAD="$LD_PRELOAD:/usr/lib/libstderred.so"
-#. /usr/share/doc/pkgfile/command-not-found.bash
 
 [[ $- != *i* ]] && return
 
@@ -33,11 +30,6 @@ colors() {
 		echo; echo
 	done
 }
-
-[ -r /usr/share/bash-completion/bash_completion ] && . /usr/share/bash-completion/bash_completion
-
-# Enable clang bash completion
-[ -f /usr/share/clang/bash-autocomplete.sh ] && source /usr/share/clang/bash-autocomplete.sh
 
 # Change the window title of X terminals
 case ${TERM} in
@@ -83,8 +75,6 @@ if ${use_color} ; then
 
 	alias ls='ls --color=auto'
 	alias grep='grep --colour=auto'
-	alias egrep='egrep --colour=auto'
-	alias fgrep='fgrep --colour=auto'
 else
 	if [[ ${EUID} == 0 ]] ; then
 		# show root@ when we don't have colors
@@ -115,6 +105,10 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+# Enable clang bash completion
+[ -f /usr/share/clang/bash-autocomplete.sh ] && source /usr/share/clang/bash-autocomplete.sh
+
 
 # Bash won't get SIGWINCH if another process is in the foreground.
 # Enable checkwinsize so that bash will check the terminal size when

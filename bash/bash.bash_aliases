@@ -9,7 +9,6 @@ alias grep="grep --color=auto"
 alias ip="ip -color=auto"
 
 alias xclip="xclip -selection c"
-alias chrome="google-chrome-stable"
 alias cp="cp -i"                          # confirm before overwriting something
 alias df='df -h'                          # human-readable sizes
 alias free='free -m'                      # show sizes in MB
